@@ -1,12 +1,65 @@
-﻿#if !defined(_MSC_VER)
-#define CODING_VS_CODE
-#endif
-#include <iostream>
+﻿#include <iostream>
 #include <math.h>
-#if !defined(CODING_VS_CODE)
-	#include <clocale>
-#endif
+
 using namespace std;
+
+
+//------------------------------------------------------------1----------------------------------------------
+
+class Time {
+	short hour;                  //hour
+	short minute;				 //minute
+	short second;				 //second
+
+public:
+	Time() : hour(20), minute(55) {}
+	Time(int a) :  second(a) {}
+		void Set_time() {
+		cout << "hour:" << hour<<"\nsecond:"<<second;
+		
+	}
+};
+
+
+
+
+
+
+void task1()
+{
+	int s = 45;
+	Time obj,obj2(s);
+	obj.Set_time();
+	
+}
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Icosahedron {
 	double a; // side of the icosahedron
