@@ -4,7 +4,7 @@
 using namespace std;
 
 
-//------------------------------------------------------------1----------------------------------------------
+//------------------------------------------------------------1------------------------------------------------------//
 
 
 class Time {
@@ -162,126 +162,118 @@ void task1()
 	obj.getMinute();
 	obj.getSecond();
 }
-//--------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------//
 
 
+//------------------------------------------------------------2------------------------------------------------------//
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Icosahedron {
-	double a; // side of the icosahedron
-	unsigned int color;
-public:
-	Icosahedron() : a(1.0), color(0) {}
-	Icosahedron(double ai) : a(ai), color(0) {}
-	Icosahedron(int ic) : a(1.0) { if (ic >= 0) color = ic; else color = 0; }
-	Icosahedron(double a, int c) {
-		this->a = a;
-		if (c >= 0) color = c; else color = 0;
-	}
-	double getA() const
-	{
-		return a;
-	}
-	void setA(double a)
-	{
-		if (a < 0 || a > 1.e+100)
-		{
-			cout << " Error set  a \n";
-			return;
-		}
-		this->a = a;
-	}
-	double getColor() const
-	{
-		return color;
-	}
-	void setColor(int c)
-	{
-		if (c < 0 || c > 10000)
-		{
-			cout << " Error set  color \n";
-			return;
-		}
-		this->color = c;
-	}
-	double S() {
-		return 5 * a * a * sqrt(3.0);
-	}
-	double V() {
-		return 5 * a * a * a * (3 + sqrt(5.0)) / 12.0;
-	}
-	double r() {
-		return a * (3 + sqrt(5.0)) / (4.0 * sqrt(3.0));
-	}
-	double R() {
-		return sqrt(2 * (5 + sqrt(5.0) * a)) / 4.0;
-	}
-	void printInfo()
-	{
-		cout << "\n a= " << a << " color = " << color;
-		cout << "  S= " << S() << " V = " << V() << "  r= " << r() << " V = " << R() << endl;
-	}
-
+enum STATE {
+	OK, BAD_INIT, BAD_DIV
 };
-int mainExample1()
-{
-	Icosahedron obj;
-	obj.printInfo();
-	double in_a; int in_color;
-	cout << " Input side and color Icosahedron  "; cin >> in_a >> in_color;
-	Icosahedron obj1(in_a), obj2(in_color), obj3(in_a, in_color);
-	obj1.printInfo();
-	obj2.printInfo();
-	obj3.printInfo();
-	obj.setA(-5);
-	obj.printInfo();
-	obj.setA(5);
-	obj.printInfo();
-	obj.setA(2.e100);
-	obj.printInfo();
-	obj.setColor(-10);
-	obj.printInfo();
-	obj.setColor(10);
-	obj.printInfo();
-	obj.setColor(10001);
-	obj.printInfo();
-	cout << " End testing \n";
-	return 1;
+
+class Vector {
+private:
+	double arr[3];
+	int state;
+	const int param;
+	static int count;
+public:
+
+	Vector() : param(0) {
+		state = OK;  for (short i = 0; i < 3; i++) arr[i] = 0; count++;
+	}
+	Vector(double p) :param(0), state(OK) { for (short i = 0; i < 3; i++) arr[i] = p; count++; }
+
+	Vector(double* p);
+	~Vector() {                      //destructor
+		count--;
+		cout << " state Vec " << state<<endl;
+		cout << " Vec delete \n";
+	}
+	int getState() {
+		return state;
+	}
+	static int getCount() {
+		if (count <= 0) cout << " There is no objects created ";
+		return count;
+	}
+	
+	Vector Add(Vector& d);
+	Vector Sub(Vector& d);
+	Vector Multiply(double d);
+	Vector Divide(short d);
+	void Input();
+	void Output();
+	bool CompLessAll(Vector& s);
+};
+int Vector::count = 0;
+
+Vector :: Vector(double* p) : param(0) {
+	if (p == nullptr) {
+		state = BAD_INIT; 
+		for (int i = 0; i < 3; i++)
+			arr[i] = 0;
+	}
+	else {
+		arr[0] = p[0];
+		arr[1] = p[1];
+		arr[2] = p[2];
+		state = OK;
+	}
+	count++;
+}
+
+void Vector::Input() {
+	cout << "Input arr";
+	for (int i = 0; i < 3; i++)
+		cin >> arr[i];
+}
+
+void Vector::Output() {
+	cout << "arr : \n";
+	for (int i = 0; i < 3; i++)
+		cout << arr[i];
+	cout << endl << "state" << state << endl;
+}
+void Vector::Add(Vector& s) :param(0) {
+	Vector tmp;
+	for (int i = 0; i < 3; i++)
+		tmp.arr[i] = arr[i] + s.arr[i];
+	return tmp;
+}
+void Vector::Sub(Vector& s) {
+	Vector tmp;
+	for (int i = 0; i < 3; i++)
+		tmp.arr[i] = arr[i] - s.arr[i];
+	return tmp;
+}
+
+Vector Vector::Divide(short d) {
+	Vector tmp;
+}
+
+void task2() {
+	double a;
+	Vector vobj;
+	cin >> a;
+	Vector obj1(a);
+
+
 }
 
 
-// Ключове слово static 
 
-class foo
-{
-private:
-	static int count; // загальне поле всім об'єктів
-	// (У сенсі "оголошення")
-public:
-	foo() { incObj(); } // інкрементування під час створення об'єкта
-	static int incObj() { return ++count; }
-	int getcount() { return count; }
-};
-int  foo::count = 0;
-// Ключове слово static ставиться перед типом способу.В основному використовуються
-//для роботи зі статичними полями класу.
+
+
+
+
+
+
+
+
+
+
+
 
 /*  Example 3
 Створити тип даних - клас вектор, який має поля x, y типу double і змінну стану. У класі визначити
@@ -294,10 +286,8 @@ o	функцію ділення на ціле типу double(при ділен�
 o	визначити функцію порівняння менше які повертають true або false.
 У змінну стани встановлювати код помилки, діленні на 0, при передачі NULL (nulptr) в конструкторі із вказівником. Передбачити можливість підрахунку числа об'єктів даного типу. Написати програму тестування всіх можливостей цього класу.
 */
-enum STATE {
-	OK, BAD_INIT, BAD_DIV
-};
 
+/*
 class Vec2
 {
 	double  x, y;
@@ -463,6 +453,7 @@ int mainExample3()
 	return 1;
 
 }
+*/
 /*example  4
 Створити тип даних - клас вектор, який має вказівник на ComplexDouble, число елементів і змінну стану. У класі визначити
 o	 конструктор без параметрів( виділяє місце для одного елемента та інінціалізує його в нуль);

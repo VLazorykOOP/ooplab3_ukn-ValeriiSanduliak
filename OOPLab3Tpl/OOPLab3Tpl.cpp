@@ -26,7 +26,8 @@ int main()
     if (conv == 1) conv = mainExample4();
     */
     
-    task1();
+    //task1();
+     task2();
     return 0;
 
 }
