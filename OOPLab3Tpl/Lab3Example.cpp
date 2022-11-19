@@ -6,39 +6,162 @@ using namespace std;
 
 //------------------------------------------------------------1----------------------------------------------
 
+
 class Time {
-	short hour;                  //hour
+	short hours;                  //hours
 	short minute;				 //minute
 	short second;				 //second
 
 public:
-	Time() : hour(20), minute(55) {}
-	Time(int a) :  second(a) {}
-		void Set_time() {
-		cout << "hour:" << hour<<"\nsecond:"<<second;
+	Time() : hours(20), minute(55), second(20) {
+		if (hours < 0 || hours>23)
+		{
+			cout << "Error!!!!!\n";
+			exit(0);
+		}
+		if (minute < 0 || minute>59)
+		{
+			cout << "Error!!!!!\n";
+			exit(0);
+		}
+		if (second < 0 || second>59)
+		{
+			cout << "Error!!!!!\n";
+			exit(0);
+		}
+	}
+	Time(short a, short b, short c) : hours(a), minute(b), second(c) {
+		if (hours < 0 || hours>23)
+		{
+			cout << "Error!!!!!\n";
+			return;
+		}
+		if (minute < 0 || minute>59)
+		{
+			cout << "Error!!!!!\n";
+			return;
+		}
+		if (second < 0 || second>59)
+		{
+			cout << "Error!!!!!\n";
+			return;
+		}
+
+	}
+
+	short getHours()  { return hours;  }
+	short getMinute() { return minute; }
+	short getSecond() { return second; }
+
+	void setHours(short hours)
+	{
+		if (hours < 0 || hours>23)
+		{
+			cout << "Error!!!!!\n";
+			return;
+		}
+		this->hours = hours;
+	}
+
+	void setMinute(short minute)
+	{
+		if (minute < 0 || minute>59)
+		{
+			cout << "Error!!!!!\n";
+			return;
+		}
+		this->minute = minute;
+	}
+	
+	void setSecond(short second)
+	{
+		if (second < 0 || second>59)
+		{
+			cout << "Error!!!!!\n";;
+			return;
+		}
+		this->second = second;
+	}
+	
+
+	void printInf24() {
+
+		
+		cout << hours << " hour " << minute << " minute " <<second<<" second"<<endl;
+	}
+	void printInf12()
+	{
+		
+	    char type;
+		if (hours < 12) {
+			type = 'A';
+		}
+		else {
+			hours = hours - 12;
+			if (hours == 0)
+			{
+				hours = 12;
+			}
+			type = 'P';
+		}
+	
+		if (type == 'A')
+		{
+			cout << hours << " A.M " << minute << " minute " << second << " second"<<endl;
+		}
+		else {
+			cout << hours << " P.M " << minute << " minute " << second << " second"<<endl;
+		}
+
 		
 	}
+
 };
-
-
-
 
 
 
 void task1()
 {
-	int s = 45;
-	Time obj,obj2(s);
-	obj.Set_time();
-	
+	Time obj;
+	obj.printInf24();
+	obj.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	short a, b, c;
+	cout << "Input hours,minute,second:";
+	cin  >> a >> b >> c;
+	Time obj1(a, b, c);
+	cout << "Output : \n";
+	obj1.printInf24();
+	obj1.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	obj.setHours(23);
+	obj.setMinute(59);
+	obj.setSecond(59);
+	obj.printInf24();
+	obj.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	obj.setHours(24);
+	obj.setMinute(59);
+	obj.setSecond(10);
+	obj.printInf24();
+	obj.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	obj.setHours(23);
+	obj.setMinute(-10);
+	obj.setSecond(2);
+	obj.printInf24();
+	obj.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	obj.setHours(23);
+	obj.setMinute(22);
+	obj.setSecond(-30);
+	obj.printInf24();
+	obj.printInf12();
+	cout << "--------------------------------------------------------------------------\n";
+	obj.getHours();
+	obj.getMinute();
+	obj.getSecond();
 }
-
-
-
-
-
-
-
 //--------------------------------------------------------------------------------------------------------------------------------
 
 
