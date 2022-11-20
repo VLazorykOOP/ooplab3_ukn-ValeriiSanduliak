@@ -16,19 +16,25 @@ using namespace std;
 int main()
 {
     cout << " Lab #3  !\n";
-//  Код виконання завдань
-//  Головне меню завдань
-//  Функції та класи можуть знаходитись в інших файлах проекту
-    /*
-    int conv = 1;
-    if (conv == 1) conv = mainExample1();
-    if (conv == 1) conv = mainExample3(); 
-    if (conv == 1) conv = mainExample4();
-    */
-    
-    //task1();
-    // task2();
-    task3();
+    char ch = '5';
+    do {
+   
+        MenuTask();
+        cout << " >>> ";
+        ch = cin.get();
+
+        cin.get();
+
+        switch (ch) {
+        case '1': task1();  break;
+        case '2': task2();  break;
+        case '3': task3();  break;
+        case '4': return 0;
+        }
+        cout << " Press any key and enter\n";
+        ch = cin.get();
+    } while (ch != '5');
+
     return 0;
 
 }

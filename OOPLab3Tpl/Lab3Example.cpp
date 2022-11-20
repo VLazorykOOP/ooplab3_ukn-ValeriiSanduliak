@@ -395,8 +395,8 @@ void task2() {
 
 	cout << "Object state " << objcopy.getState() << endl;
 	if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy less ObjectDef" << endl;
-	if (objcopy.CompMoreAll(objdef)) cout << "ObjectCopy More ObjectDef" << endl;
-	if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy Exactly ObjectDef" << endl;
+	else if (objcopy.CompMoreAll(objdef)) cout << "ObjectCopy More ObjectDef" << endl;
+	else if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy Exactly ObjectDef" << endl;
 	cout << "End testing";
 }
 
@@ -413,8 +413,6 @@ class Vect {
 public:
 	Vect();
 	Vect(short n);
-
-
 };
 
 Vect::Vect() {
@@ -488,182 +486,11 @@ void task3() {
 	
 
 }
-
-/*example  4
-Створити тип даних - клас вектор, який має вказівник на ComplexDouble, число елементів і змінну стану. У класі визначити
-o	 конструктор без параметрів( виділяє місце для одного елемента та інінціалізує його в нуль);
-o	конструктор з одним параметром - розмір вектора( виділяє місце та інінціалізує масив значенням нуль);
-o	конструктор із двома параметрами - розмір вектора та значення ініціалізації(виділяє місце (значення перший аргумент) та інінціалізує значенням другого аргументу).
-o	конструктор копій та операцію присвоєння; // !!!
-o	деструктор звільняє пам'ять;
-o	визначити функції друку, додавання;
-У змінну стани встановлювати код помилки, коли не вистачає пам'яті, виходить за межі масиву. Передбачити можливість підрахунку числа об'єктів даного типу. Написати програму тестування всіх можливостей цього класу.
-*/
-
-#include<complex>
-using namespace std;
-typedef complex<double> ComplexDouble;
-#define _RE 0
-#define _IM 1
-
-class ComplexVector
+void MenuTask()
 {
-	ComplexDouble* v;
-	int num;
-	int state = 0;
-public:
-	ComplexVector() : v(NULL), num(0), state(0) {}
-	ComplexVector(int n);
-	ComplexVector(int n, ComplexDouble&);
-	ComplexVector(int n, ComplexDouble*);
-	ComplexVector(const ComplexVector& s);
-	ComplexVector& operator=(const ComplexVector& s);
-	~ComplexVector() {
-		cout << " del vec";
-		if (v) delete[] v;
-	}
-	void Output();
-	void Input();
-	ComplexVector Add(ComplexVector& b);
-
-};
-
-ComplexVector::ComplexVector(int n) {
-	if (n <= 0) { v = NULL;  num = 0;   state = -1; cout << " Vec --> 0  "; }
-	num = n;
-	v = new ComplexDouble[n];
-	for (int i = 0; i < n; i++) {
-		v[i] = 0.0;
-		//v[i]._Val[_RE]=0.0; v[i]._Val[_IM]=0.0;  
-	}
+	cout << "     Menu Task   \n";
+	cout << "    1.  Class Time  \n";
+	cout << "    2.  Class Vector \n";
+	cout << "    3.  Class Vector and Matrix \n";
+	cout << "    4.  Exit \n";
 }
-ComplexVector::ComplexVector(int n, ComplexDouble& b) {
-	if (n <= 0) { v = NULL;  num = 0;   state = -1; cout << " Vec --> 0  "; }
-	num = n;
-	v = new ComplexDouble[n];
-	for (int i = 0; i < n; i++) {
-		v[i] = b;
-		//v[i]._Val[_RE]=0.0; v[i]._Val[_IM]=0.0;  
-	}
-}
-
-ComplexVector::ComplexVector(int n, ComplexDouble* p) {
-	if (n <= 0 || p == NULL) { v = NULL;  num = 0;   state = -1; cout << " Vec --> 0  "; }
-	num = n;
-	v = new ComplexDouble[n];
-	for (int i = 0; i < n; i++) {
-		v[i] = p[i];
-	}
-}
-
-ComplexVector::ComplexVector(const ComplexVector& s) {
-
-	num = s.num;
-	v = new ComplexDouble[num];
-	state = 0;
-	for (int i = 0; i < num; i++)   v[i] = s.v[i];
-}
-
-ComplexVector& ComplexVector::operator=(const ComplexVector& s) {
-
-	if (num != s.num)
-	{
-		if (v) delete[] v;
-		num = s.num;
-		v = new ComplexDouble[num];
-		state = 0;
-	}
-	for (int i = 0; i < num; i++)   v[i] = s.v[i];
-	return *this;
-}
-void ComplexVector::Input() {
-	if (num == 0) {
-		if (v) delete[] v;
-		do {
-			cout << "Input size Vec\n";
-			cin >> num;
-		} while (num <= 0);
-		v = new ComplexDouble[num];
-	}
-	for (int i = 0; i < num; i++) {
-
-#if defined(_MSC_VER)
-cout << " v [ " << i << " ] real img  "; cin >> v[i] >> v[i]._Val[_IM];
-#else 
-double re,im;
-cout << " v [ " << i << " ] real img  "; cin >> re>>im;
-v[i].real(re); 
-v[i].imag(im);
-#endif		
-		
-		
-	}
-}
-
-void ComplexVector::Output() {
-	if (num != 0) {
-		for (int i = 0; i < num; i++) {
-			cout << " v [ " << i << " ]   " << v[i] << '\t';
-			cout << endl;
-		}
-	}
-}
-
-ComplexVector ComplexVector::Add(ComplexVector& b) {
-	int tnum;
-	tnum = num < b.num ? num : b.num;
-	if (tnum >= 0) {
-		ComplexVector tmp(tnum);
-		for (int i = 0; i < tnum; i++) tmp.v[i] = v[i] + b.v[i];
-		return tmp;
-	}
-	return ComplexVector(0);
-}
-
-
-int mainExample4()
-{
-	ComplexDouble a(1.0, 2), b, c;
-	cout << a << endl;
-#if defined(_MSC_VER)
-    b._Val[_RE] = 21.3;
-	b._Val[_IM] = 22.3;
-#else 
-    b.real( 21.3);
-	b.imag (22.3);
-#endif	
-	
-	cout << b << endl;
-	c = a + b;
-	cout << c << endl;
-	cout << " Test  " << endl;
-	ComplexVector VecObj, VecObj1(10);
-	cout << "VecObj \n";
-	VecObj.Output();
-	cout << "VecObj1 \n";
-	VecObj1.Output();
-	cout << " Input a " << endl;
-
-#if defined(_MSC_VER)
- cin >> a >> a._Val[_IM];
-#else 
-double re,im;
-cin >> re>>im;
-a.real(re); 
-a.imag(im);
-#endif		
-	cout << a << endl;
-	ComplexVector VecObj2(10, a);
-	VecObj2.Output();
-
-	VecObj.Input();
-	cout << endl;
-	VecObj.Output();
-	VecObj1 = VecObj.Add(VecObj2);
-	VecObj1.Output();
-
-	return 1;
-}
-
-/// 
-
