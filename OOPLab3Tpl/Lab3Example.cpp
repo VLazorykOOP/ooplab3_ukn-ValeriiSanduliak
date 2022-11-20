@@ -1,5 +1,9 @@
 ﻿#include <iostream>
 #include <math.h>
+#include <time.h>
+#include <random>
+#include <stdlib.h>
+#include <cstdlib>
 
 using namespace std;
 
@@ -182,83 +186,198 @@ public:
 	Vector() : param(0) {
 		state = OK;  for (short i = 0; i < 3; i++) arr[i] = 0; count++;
 	}
-	Vector(double p) :param(0), state(OK) { for (short i = 0; i < 3; i++) arr[i] = p; count++; }
+	Vector(double p) :param(0), state(OK) {
+		for (short i = 0; i < 3; i++) arr[i] = p; count++; 
+	}
+	//copy
+	Vector(const Vector& s) : state(OK), param(0) {
+		for (int i = 0; i < 3; i++) arr[i] = s.arr[i];
+		count++;
+	}
+	Vector& operator=(const Vector& s) {
+		if (this == &s) return *this;
+		for (int i = 0; i < 3; i++) {
+			arr[i] = s.arr[i];
+		}
+		return *this;
+	}
 
-	Vector(double* p);
-	~Vector() {                      //destructor
+
+	Vector(double* value);
+	// destructor : 
+	~Vector() {
 		count--;
-		cout << " state Vec " << state<<endl;
-		cout << " Vec delete \n";
+		cout << "state Vector " << state <<endl;
+		cout << "Vector delete" << endl;
+	}
+	Vector Add(Vector& d);
+	Vector Minus(Vector& d);
+	Vector Multiply(double d);
+	Vector DivideShort(short d);
+	void Input();
+	void Output();
+	void addElement(const int p);
+	void getElement();
+	bool CompLessAll(Vector& s);
+	static int getCount() {
+		if (count <= 0) cout << " No objects Vector ";
+		return count;
 	}
 	int getState() {
 		return state;
 	}
-	static int getCount() {
-		if (count <= 0) cout << " There is no objects created ";
-		return count;
-	}
-	
-	Vector Add(Vector& d);
-	Vector Sub(Vector& d);
-	Vector Multiply(double d);
-	Vector Divide(short d);
-	void Input();
-	void Output();
-	bool CompLessAll(Vector& s);
 };
+
 int Vector::count = 0;
 
-Vector :: Vector(double* p) : param(0) {
-	if (p == nullptr) {
-		state = BAD_INIT; 
-		for (int i = 0; i < 3; i++)
-			arr[i] = 0;
+Vector::Vector(double* value) :param(0) {
+	if (value == nullptr) {
+		state = BAD_INIT;
+		arr[0] = 0;
+		arr[1] = 0;
+		arr[2] = 0;
 	}
 	else {
-		arr[0] = p[0];
-		arr[1] = p[1];
-		arr[2] = p[2];
+		arr[0] = value[0];
+		arr[1] = value[1];
+		arr[2] = value[2];
 		state = OK;
 	}
 	count++;
 }
 
+Vector Vector::Add(Vector& s){
+	Vector tmp;
+	for (int i = 0; i < 3; i++) {
+		tmp.arr[i] = arr[i] + s.arr[i];
+	}
+	return tmp;
+}
+
+Vector Vector::Minus(Vector& s) {
+	Vector tmp;
+	for (int i = 0; i < 3; i++) {
+		tmp.arr[i] = arr[i] - s.arr[i];
+	}
+	return tmp;
+}
+
+Vector Vector::Multiply(double d) {
+	Vector tmp;
+	if (d == 0) {
+		tmp.state = BAD_DIV;
+		cout << "Eror BAD_DIV" << endl;
+		return *this;
+	}
+	for (int i = 0; i < 3; i++) {
+		tmp.arr[i] = arr[i] * d;
+	}
+	return tmp;
+}
+
+Vector Vector::DivideShort(short d) {
+	Vector tmp;
+	if (d == 0) {
+		tmp.state = BAD_DIV;
+		cout << "Eror BAD_DIV" << endl;
+		return *this;
+	}
+	for (int i = 0; i < 3; i++) {
+		tmp.arr[i] = arr[i] / d;
+	}
+	return tmp;
+}
+
 void Vector::Input() {
-	cout << "Input arr";
-	for (int i = 0; i < 3; i++)
+	cout << "Input element array: ";
+	for (int i = 0; i < 3; i++) {
 		cin >> arr[i];
+	}
 }
 
 void Vector::Output() {
-	cout << "arr : \n";
-	for (int i = 0; i < 3; i++)
-		cout << arr[i];
-	cout << endl << "state" << state << endl;
-}
-void Vector::Add(Vector& s) :param(0) {
-	Vector tmp;
-	for (int i = 0; i < 3; i++)
-		tmp.arr[i] = arr[i] + s.arr[i];
-	return tmp;
-}
-void Vector::Sub(Vector& s) {
-	Vector tmp;
-	for (int i = 0; i < 3; i++)
-		tmp.arr[i] = arr[i] - s.arr[i];
-	return tmp;
+	cout << "Output element array:" << endl;
+	for (int i = 0; i < 3; i++) {
+		cout <<" "<< arr[i];
+	}
+	cout << endl;
 }
 
-Vector Vector::Divide(short d) {
-	Vector tmp;
+
+void Vector::addElement(const int p) {
+	srand(time(nullptr));
+	int randomElement = rand() % 3;
+	arr[randomElement] = p;
 }
 
+void Vector::getElement() {
+	srand(time(nullptr));
+	int randomElement = rand() % 3;
+	cout << "Output random element in arry : " << arr[randomElement]<<endl;
+}
+
+bool Vector::CompLessAll(Vector& s) {
+	for (int i = 0; i < 3; i++) {
+		if (arr[i] < s.arr[i])
+			return true;
+	}
+	return false;
+}
 void task2() {
-	double a;
-	Vector vobj;
-	cin >> a;
-	Vector obj1(a);
+	double* v = nullptr, v2[] = { 1.1, 2.2, 10 };
+	Vector objdef;
+	Vector obj1(10.1);
+	Vector objcopy(obj1);
+	Vector obj2(v2);
+	Vector obj3(v2);
+	cout << "Test class Vector : " << endl;
+	cout << "------------------------------------------------------------------" << endl;
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	obj1.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	objdef.addElement(10);
+	objdef.getElement();
+	cout << "------------------------------------------------------------------" << endl;
+	if (obj2.getState() != OK) cout << "Obj2 arr[i] = 0"<<endl;
+	obj2.Output();
+	if (obj3.getState() != OK) cout << "Obj2 arr[i] = 0" << endl;
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Number of created objects Vector :" << Vector::getCount() << endl;
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Test Input: "<<endl;
+	objdef.Input();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Test functions:" << endl;	
+	cout << "------------------------------------------------------------------" << endl;
+	objdef = objdef.Add(obj1);
+	cout << "//////" << endl;
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "The number of created Vector objects before Munis" <<Vector::getCount() << endl;
+	objdef = objdef.Minus(obj1);
+	cout << "The number of created Vector objects after Munis" << Vector::getCount() << endl;
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Multiply function : " << endl;
+	objdef = objdef.Multiply(5);
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "DevideShort function : " << endl;
+	objdef = objdef.DivideShort(5);
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	if (objdef.getState() == STATE::BAD_DIV) cout << "BAD_DIV" << endl;
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	objdef = objdef.DivideShort(0);
+	if (objdef.getState() == STATE::BAD_DIV) cout << "BAD_DIV" << endl;
+	objdef.Output();
+	cout << "------------------------------------------------------------------" << endl;
 
-
+	cout << "Object state " << objcopy.getState() << endl;
+	if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy less ObjectDef" << endl;
+	cout << "End testing";
 }
 
 
