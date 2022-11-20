@@ -4,7 +4,8 @@
 #include <random>
 #include <stdlib.h>
 #include <cstdlib>
-
+#include <chrono>
+#include <thread>
 using namespace std;
 
 
@@ -219,6 +220,8 @@ public:
 	void addElement(const int p);
 	void getElement();
 	bool CompLessAll(Vector& s);
+	bool CompMoreAll(Vector& s);
+	bool CompExactlyAll(Vector& s);
 	static int getCount() {
 		if (count <= 0) cout << " No objects Vector ";
 		return count;
@@ -323,6 +326,21 @@ bool Vector::CompLessAll(Vector& s) {
 	}
 	return false;
 }
+bool Vector::CompMoreAll(Vector& s) {
+	for (int i = 0; i < 3; i++) {
+		if (arr[i] > s.arr[i])
+			return true;
+	}
+	return false;
+}
+bool Vector::CompExactlyAll(Vector& s) {
+	for (int i = 0; i < 3; i++) {
+		if (arr[i] == s.arr[i])
+			return true;
+	}
+	return false;
+}
+
 void task2() {
 	double* v = nullptr, v2[] = { 1.1, 2.2, 10 };
 	Vector objdef;
@@ -377,202 +395,100 @@ void task2() {
 
 	cout << "Object state " << objcopy.getState() << endl;
 	if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy less ObjectDef" << endl;
+	if (objcopy.CompMoreAll(objdef)) cout << "ObjectCopy More ObjectDef" << endl;
+	if (objcopy.CompLessAll(objdef)) cout << "ObjectCopy Exactly ObjectDef" << endl;
 	cout << "End testing";
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 
 
+//------------------------------------------------------------3------------------------------------------------------//
 
 
+class Vect {
+
+	double* vector;
+	short sizeVector;
+public:
+	Vect();
+	Vect(short n);
 
 
+};
 
+Vect::Vect() {
+	sizeVector = 5;
+	vector = new double[sizeVector];
+	for (int i = 0; i < sizeVector; i++) {
+		vector[i] = 0;
+	}
+}
+Vect::Vect(short n) {
+	sizeVector = n;
+	vector = new double[n];
+	for (int i = 0; i < n; i++) {
+		vector[i] = 0;
+	}
+}
 
-
-
-
-
-
-
-/*  Example 3
-Створити тип даних - клас вектор, який має поля x, y типу double і змінну стану. У класі визначити
-o	конструктор без параметрів(інінціалізує поля в нуль);
-o	конструктор з одним параметром типу double (інінціалізує поля);
-o	конструктор з одним параметром вказівник на тип double (інінціалізує поля x, y значенням масиву за вказівником, якщо вказівник NULL (nulptr) то встановити код помилки);
-o	деструктор із виведенням інформації про стан вектора;
-o	визначити функції друку, додавання, віднімання, векторний добуток які здійснюють ці арифметичні операції з даними цього класу;
-o	функцію ділення на ціле типу double(при діленні на 0 змінити стан, а ділення не виконувати);
-o	визначити функцію порівняння менше які повертають true або false.
-У змінну стани встановлювати код помилки, діленні на 0, при передачі NULL (nulptr) в конструкторі із вказівником. Передбачити можливість підрахунку числа об'єктів даного типу. Написати програму тестування всіх можливостей цього класу.
-*/
-
-/*
-class Vec2
-{
-	double  x, y;
+//-------------------------------------------------------------------------------------------------------------------//
+class Matrix {
+	Vect* matrix;
+	short row;
+	short column;
 	int state;
 	static int count;
 public:
-	Vec2() : x(0), y(0) {
-		state = OK; count++;
-	}   // 	 конструктор без параметрів
-	Vec2(double iv) : x(iv), y(iv) {
-		state = OK; count++;
-	}
-	Vec2(double ix, double iy);
-	Vec2(double* v);
-	~Vec2() {
-		count--;
-		cout << " state Vec " << state;
-		cout << " Vec delete \n";
-	}
-	Vec2(const Vec2&);
-	Vec2 Add(Vec2& d);
-	Vec2 Sub(Vec2& d);
-	Vec2 Mul(double d);
-	Vec2 Div(double d);
-	void Input();   //  !!! Без первантаження операцій    
-	void Output();  //  !!! Без первантаження операцій
-	bool CompLessAll(Vec2& s);
-	static int getCount() {
-		if (count <= 0) cout << " Немає об'єктів Vec2 ";
-		return count;
-	}
-	int getState() { return state; }
-};
-int Vec2::count = 0;
-Vec2::Vec2(double ix, double iy) {
-	x = ix; y = iy;
-	state = OK;
-	count++;
-}
-Vec2::Vec2(const Vec2& s) {
-	if (this == &s) return;
-	x = s.x; y = s.y; state = OK;
-	count++;
-};
-Vec2::Vec2(double* v) {
-	if (v == nullptr) {
-		state = BAD_INIT; x = 0; y = 0;
-	}
-	else {
-		x = v[0]; y = v[1];
-		state = OK;
-	}
-	count++;
-}
-void Vec2::Input() {
-	cout << " Input  x y ";
-	cin >> x >> y;
-}
-void Vec2::Output() {
-	cout << " x =" << x << " y = " << y << " state  " << state << endl;
-}
+	Matrix();
+	Matrix(short n);
+	Matrix(short row, short column, double value);
+	Matrix Add(Matrix& d);
+	Matrix Minus(Matrix& d);
+	Matrix Multiply(double d);
+	Matrix DivideShort(int d);
 
-Vec2 Vec2::Add(Vec2& s) {
-	Vec2 tmp;
-	tmp.x = x + s.x;
-	tmp.y = y + s.y;
-	return tmp;
-}
+	Matrix(Matrix& s) {
+		matrix = s.matrix;
+		row = s.row;
+		column = s.column;
+	}
 
-Vec2 Vec2::Sub(Vec2& s) {
-	Vec2 tmp;
-	tmp.x = x - s.x;
-	tmp.y = y - s.y;
-	return tmp;
-}
-Vec2 Vec2::Div(double d) {
-	Vec2 tmp;
-	if (fabs(d) < 1.e-25) {
-		tmp.state = BAD_DIV;
-		cout << " Error div \n";
+	Matrix& operator=(Matrix& s) {
+		matrix = s.matrix;
+		row = s.row;
+		column = s.column;
 		return *this;
 	}
-	tmp.x = x / d;
-	tmp.y = y / d;
-	return tmp;
+
+	int getRow();
+	int getColumn();
+	void Output();
+
+	static int getCount() {
+		if (count <= 0) cout << " No objects Vector ";
+		return count;
+	}
+	int getState() {
+		return state;
+	}
+	bool CompLessAll(Matrix& s);
+	bool CompMoreAll(Matrix& s);
+	bool CompEqualsAll(Matrix& s);
+};
+
+int Matrix::count = 0;
+Matrix::Matrix() {
+	
 }
-Vec2 Vec2::Mul(double d) {
-	Vec2 tmp;
-	tmp.x = x * d;
-	tmp.y = y * d;
-	return tmp;
-}
 
-bool Vec2::CompLessAll(Vec2& s) {
 
-	if (x < s.x && y < s.y) return true;
-	return false;
-}
-
-int mainExample3()
-{
-#if !defined(CODING_VS_CODE)
-	setlocale(LC_CTYPE, "ukr");
-	cout << "Тестування створенного класу \n";
-	cout << "Тестування конструкторiв \n"; 
-#else 
-	cout << "Testing create class  \n";
-	cout << "Testing crot's  \n";
-#endif
-	Vec2 ObjCDef;
-	ObjCDef.Output();
-	Vec2 ObjP1(10.0);
-	ObjP1.Output();
-	double  a = 1.0, b = 2.0;
-	Vec2  ObjP2(a, b);
-	ObjP2.Output();
-	Vec2 ObjCopy(ObjP2);
-	double* v = nullptr, v2[] = { 1.2, 3.3 };
-	Vec2  ObjP3(v2);
-	if (ObjP3.getState() != OK) cout << " ObjP3  x= 0  y= 0  \n";
-	Vec2  ObjP4(v2);
-	if (ObjP4.getState() != OK) cout << " ObjP4 x= 0  y= 0  \n";
-#if !defined(CODING_VS_CODE)
-	cout << " Кiлькiсть створених об'єктiв Vec2 " << Vec2::getCount() << endl;
-	cout << "Тестування введення \n";
-	ObjCDef.Input();
-	cout << "Тестування функцiй \n";
-	ObjCDef = ObjCDef.Add(ObjP2);
-	ObjCDef.Output();
-	cout << " \n Кiлькiсть створених об'єктiв Vec2 до Sub " << Vec2::getCount() << endl;
-	ObjCDef = ObjCDef.Sub(ObjP2);
-	cout << " \n Кiлькiсть створених об'єктiв Vec2 пiсля Sub " << Vec2::getCount() << endl;
-#else 
-	cout << "Testing input \n";
-	ObjCDef.Input();
-	cout << "Testing gunction \n";
-	ObjCDef = ObjCDef.Add(ObjP2);
-	ObjCDef.Output();
-	cout << " \n Counts create objects Vec2 before  Sub " << Vec2::getCount() << endl;
-	ObjCDef = ObjCDef.Sub(ObjP2);
-	cout << " \n  Counts create objects Vec2 after Sub  " << Vec2::getCount() << endl;
-#endif
-
-	ObjCDef.Output();
-	ObjCDef = ObjCDef.Mul(5);
-	ObjCDef.Output();
-	ObjCDef = ObjCDef.Div(1.3);
-	if (ObjCDef.getState() == STATE::BAD_DIV) cout << "BAD_DIV \n";
-	ObjCDef.Output();
-
-	ObjCDef = ObjCDef.Div(0.0);
-	if (ObjCDef.getState() == STATE::BAD_DIV) cout << "BAD_DIV \n";
-	ObjCDef.Output();
-	cout << "ObjCopy state " << ObjCopy.getState() << endl;
-	if (ObjCopy.CompLessAll(ObjCDef))  cout << "ObjCopy less ObjDef  " << endl;
+void task3() {
 
 	
-#if !defined(CODING_VS_CODE)
-	cout << "Завершення  тестування  \n";
-#else 
-	cout << "Completion of testing  \n";
-#endif
-	return 1;
 
 }
-*/
+
 /*example  4
 Створити тип даних - клас вектор, який має вказівник на ComplexDouble, число елементів і змінну стану. У класі визначити
 o	 конструктор без параметрів( виділяє місце для одного елемента та інінціалізує його в нуль);
