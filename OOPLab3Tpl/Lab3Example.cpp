@@ -7,8 +7,14 @@
 #include <chrono>
 #include <thread>
 using namespace std;
-
-
+void MenuTask()
+{
+	cout << "     Menu Task   \n";
+	cout << "    1.  Class Time  \n";
+	cout << "    2.  Class Vector \n";
+	cout << "    3.  Class Vector and Matrix \n";
+	cout << "    4.  Exit \n";
+}
 //------------------------------------------------------------1------------------------------------------------------//
 
 
@@ -406,91 +412,143 @@ void task2() {
 //------------------------------------------------------------3------------------------------------------------------//
 
 
+
 class Vect {
-
 	double* vector;
-	short sizeVector;
+	int num=5;
+	int state=0;
+	static int badIndexRef;
+	static int numVec;
 public:
-	Vect();
-	Vect(short n);
+	Vect() : num(0), vector(nullptr) {}
+	Vect(int n);
+	Vect(const Vect& s);  // crot copy
+	Vect& operator=(const Vect& s);
+	Vect& operator=(Vect&& s) noexcept;
+	void Init(int n);
+	void Init(int n, double);
+	~Vect() {
+		if (vector) delete[] vector;
+	}
+	void Input();
+	void Output();
 };
-
-Vect::Vect() {
-	sizeVector = 5;
-	vector = new double[sizeVector];
-	for (int i = 0; i < sizeVector; i++) {
-		vector[i] = 0;
+int Vect::numVec = 0;
+Vect::Vect(int n) {
+	if (n <= 0) n = 5; //default num = 5 ;
+	num = n;
+	vector = new double[n];
+	for (int i = 0; i < num; i++) {
+		vector[i] = 0.0;
 	}
 }
-Vect::Vect(short n) {
-	sizeVector = n;
-	vector = new double[n];
-	for (int i = 0; i < n; i++) {
-		vector[i] = 0;
+
+void Vect::Init(int n) {
+	if (num != n) {
+		if (vector != nullptr) delete[] vector;
+		num = n;
+		vector = new double[n];
 	}
+	for (int i = 0; i < num; i++) vector[i] = 0;
+}
+
+void Vect::Init(int n, double x) {
+	if (num != n) {
+		if (vector != nullptr) delete[] vector;
+		num = n;
+		vector = new double[n];
+	}
+	for (int i = 0; i < num; i++) 	vector[i] = x;
+}
+Vect::Vect(const Vect& s) {
+	// if (this == &s) return;  // the expression is used in the old standard
+	num = s.num;
+	vector = new double[num];
+	state = 1;
+	for (int i = 0; i < num; i++)   vector[i] = s.vector[i];
+}
+Vect& Vect::operator=(const Vect& s) {
+	if (this == &s) return *this;
+	if (num != s.num)
+	{
+		if (vector) delete[] vector;
+		num = s.num;
+		vector = new double[num];
+		state = 1;
+	}
+	for (int i = 0; i < num; i++)   vector[i] = s.vector[i];
+	return *this;
+}
+
+Vect& Vect::operator=(Vect&& s) noexcept
+{
+	if (this == &s) return *this;
+	num = s.num; state = s.state;
+	if (this->vector != nullptr) delete[] vector;
+	vector = s.vector;
+	s.num = 0; s.vector = nullptr; s.state = -1;
+	return *this;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 class Matrix {
-	Vect* matrix;
-	short row;
-	short column;
+	Vect* vect = nullptr;
+	int n = 5;
+	int m = 5;
 	int state;
-	static int count;
 public:
-	Matrix();
-	Matrix(short n);
-	Matrix(short row, short column, double value);
-	Matrix Add(Matrix& d);
-	Matrix Minus(Matrix& d);
-	Matrix Multiply(double d);
-	Matrix DivideShort(int d);
-
-	Matrix(Matrix& s) {
-		matrix = s.matrix;
-		row = s.row;
-		column = s.column;
+	Matrix() : Matrix(2){}
+	Matrix(int n) : Matrix(n, n) {};
+	Matrix(int n, int m) : Matrix(n, n, 0) {};
+	Matrix(int n, int m, double);
+	Matrix(const Matrix& s);
+	Matrix& operator=(const Matrix& s);
+	~Matrix() {
+		if (vect) delete[] vect;
 	}
-
-	Matrix& operator=(Matrix& s) {
-		matrix = s.matrix;
-		row = s.row;
-		column = s.column;
-		return *this;
-	}
-
-	int getRow();
-	int getColumn();
+	void Input();
 	void Output();
-
-	static int getCount() {
-		if (count <= 0) cout << " No objects Vector ";
-		return count;
-	}
-	int getState() {
-		return state;
-	}
-	bool CompLessAll(Matrix& s);
-	bool CompMoreAll(Matrix& s);
-	bool CompEqualsAll(Matrix& s);
 };
 
-int Matrix::count = 0;
-Matrix::Matrix() {
+Matrix::Matrix(int ni, int mi, double b)
+{
+	if (ni <= 0) n = 2; else n = ni;
+	if (mi <= 0) m = 2; else m = mi;
+	vect = new Vect[n];
+	for (int i = 0; i < n; i++) { vect[i].Init(m,b); }
 	
 }
+Matrix::Matrix(const Matrix& s)
+{
+	n = s.n;
+	m = s.m;
+	int i;
+	vect = new Vect[n];
+	for (i = 0; i < n; i++) vect[i].Init(m, 0);
+	for (i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)  vect[i][j] = s.vect[i][j];
 
+}
+Matrix& Matrix::operator=(const Matrix& s)
+{
+	if (this != &s) {
+		int i;
+		if (n != s.n || m != s.m) {
+			n = s.n; m = s.m;
+			if (vect != nullptr) {
+				delete[] vect;
+			}
+			vect = new Vect[n];
+			for (i = 0; i < n; i++) vect[i].Init(m, 0);
+		}
+		for (i = 0; i < n; i++)
+			for (int j = 0; j < m; j++)  vect[i][j] = s.vect[i][j];
 
+	}
+	return *this;
+}
 void task3() {
 
 	
+}
 
-}
-void MenuTask()
-{
-	cout << "     Menu Task   \n";
-	cout << "    1.  Class Time  \n";
-	cout << "    2.  Class Vector \n";
-	cout << "    3.  Class Vector and Matrix \n";
-	cout << "    4.  Exit \n";
-}
