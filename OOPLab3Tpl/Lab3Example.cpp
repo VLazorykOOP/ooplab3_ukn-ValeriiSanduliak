@@ -411,100 +411,130 @@ void task2() {
 
 //------------------------------------------------------------3------------------------------------------------------//
 
-
-
-class Vect {
-	double* vector;
-	int num=5;
-	int state=0;
-	static int badIndexRef;
+class Vector2{
+	double* v;
+	int num = 2;
+	int state = 0;
+	static double badIndexRef;
 	static int numVec;
 public:
-	Vect() : num(0), vector(nullptr) {}
-	Vect(int n);
-	Vect(const Vect& s);  // crot copy
-	Vect& operator=(const Vect& s);
-	Vect& operator=(Vect&& s) noexcept;
-	void Init(int n);
-	void Init(int n, double);
-	~Vect() {
-		if (vector) delete[] vector;
+	Vector2() : num(0), v(nullptr) {}
+	Vector2(int n);
+	Vector2(int n, double&);
+	Vector2(const Vector2& s);  // crot copy
+	Vector2& operator=(const Vector2& s);
+	void Init(int n);   //
+	void Init(int n, double);   //
+	double& operator[](int index);
+	~Vector2() {
+	    std::cout << " del vec";
+		if (v) delete[] v;
 	}
 	void Input();
 	void Output();
 };
-int Vect::numVec = 0;
-Vect::Vect(int n) {
-	if (n <= 0) n = 5; //default num = 5 ;
+double Vector2::badIndexRef = 0;
+int Vector2::numVec = 0;
+Vector2::Vector2(int n) {
+	if (n <= 0)    n = 2;  // default num =2;
 	num = n;
-	vector = new double[n];
+	v = new double[n];
+	for (int i = 0; i < n; i++) {
+		v[i] = 0.0;  
+	}
+}
+Vector2::Vector2(int n, double& b) : Vector2(n) {
 	for (int i = 0; i < num; i++) {
-		vector[i] = 0.0;
+		v[i] = b;
 	}
+}
+void Vector2::Init(int n) {
+	if (num != n) {
+		if (v != nullptr) delete[] v;
+		num = n;
+		v = new double[n];
+	}
+	for (int i = 0; i < num; i++) 	v[i] = 0;
+}
+void Vector2::Init(int n, double b) {
+	if (num != n) {
+		if (v != nullptr) delete[] v;
+		num = n;
+		v = new double[n];
+	}
+	for (int i = 0; i < num; i++) 	v[i] = b;
 }
 
-void Vect::Init(int n) {
-	if (num != n) {
-		if (vector != nullptr) delete[] vector;
-		num = n;
-		vector = new double[n];
-	}
-	for (int i = 0; i < num; i++) vector[i] = 0;
-}
 
-void Vect::Init(int n, double x) {
-	if (num != n) {
-		if (vector != nullptr) delete[] vector;
-		num = n;
-		vector = new double[n];
-	}
-	for (int i = 0; i < num; i++) 	vector[i] = x;
-}
-Vect::Vect(const Vect& s) {
-	// if (this == &s) return;  // the expression is used in the old standard
+Vector2::Vector2(const Vector2& s) {
+	if (this == &s) return;  
 	num = s.num;
-	vector = new double[num];
+	v = new double[num];
 	state = 1;
-	for (int i = 0; i < num; i++)   vector[i] = s.vector[i];
+	for (int i = 0; i < num; i++)   v[i] = s.v[i];
 }
-Vect& Vect::operator=(const Vect& s) {
+Vector2& Vector2::operator=(const Vector2& s) {
 	if (this == &s) return *this;
 	if (num != s.num)
 	{
-		if (vector) delete[] vector;
+		if (v) delete[] v;
 		num = s.num;
-		vector = new double[num];
+		v = new double[num];
 		state = 1;
 	}
-	for (int i = 0; i < num; i++)   vector[i] = s.vector[i];
+	for (int i = 0; i < num; i++)   v[i] = s.v[i];
 	return *this;
 }
-
-Vect& Vect::operator=(Vect&& s) noexcept
+double& Vector2::operator[](int index)
 {
-	if (this == &s) return *this;
-	num = s.num; state = s.state;
-	if (this->vector != nullptr) delete[] vector;
-	vector = s.vector;
-	s.num = 0; s.vector = nullptr; s.state = -1;
-	return *this;
+	if (index >= 0 && index < num) return v[index];
+	cout << " Error : operator[] - index out of range \n";
+	return badIndexRef;
 }
 
+
+void Vector2::Input() {
+	int in_num = 0;
+	do {
+		cout << "Input size Vec\n";
+		cin >> in_num;
+	} while (in_num <= 0);
+	if (num != in_num) {
+		num = in_num;
+		if (v) delete[] v;
+		v = new double[num];
+	}
+	cout << " Input  v["<<num<<"] : ";
+	for (int i = 0; i < num; i++)
+	{
+		//cout << " v [ " << i << " ] real img  "; 
+		cin >> v[i];
+	}
+}
+void Vector2::Output() {
+	if (num != 0) {
+		for (int i = 0; i < num; i++)
+			cout << v[i] << '\t';
+		cout << endl;
+	}
+}
 //-------------------------------------------------------------------------------------------------------------------//
+
 class Matrix {
-	Vect* vect = nullptr;
-	int n = 5;
-	int m = 5;
-	int state;
+	Vector2* vec = nullptr;
+	int n = 2, m = 2;
+	int state = 0;
 public:
-	Matrix() : Matrix(2){}
+	Matrix() : Matrix(2) {}
 	Matrix(int n) : Matrix(n, n) {};
 	Matrix(int n, int m) : Matrix(n, n, 0) {};
 	Matrix(int n, int m, double);
 	Matrix(const Matrix& s);
 	Matrix& operator=(const Matrix& s);
+	Vector2& operator[](int index);
 	~Matrix() {
-		if (vect) delete[] vect;
+	    std::cout << " del mat";
+		if (vec) delete[] vec;
 	}
 	void Input();
 	void Output();
@@ -514,19 +544,18 @@ Matrix::Matrix(int ni, int mi, double b)
 {
 	if (ni <= 0) n = 2; else n = ni;
 	if (mi <= 0) m = 2; else m = mi;
-	vect = new Vect[n];
-	for (int i = 0; i < n; i++) { vect[i].Init(m,b); }
-	
+	vec = new Vector2[n];
+	for (int i = 0; i < n; i++) vec[i].Init(m, b);
 }
 Matrix::Matrix(const Matrix& s)
 {
 	n = s.n;
 	m = s.m;
 	int i;
-	vect = new Vect[n];
-	for (i = 0; i < n; i++) vect[i].Init(m, 0);
+	vec = new Vector2[n];
+	for (i = 0; i < n; i++) vec[i].Init(m, 0);
 	for (i = 0; i < n; i++)
-		for (int j = 0; j < m; j++)  vect[i][j] = s.vect[i][j];
+		for (int j = 0; j < m; j++)  vec[i][j] = s.vec[i][j];
 
 }
 Matrix& Matrix::operator=(const Matrix& s)
@@ -535,20 +564,46 @@ Matrix& Matrix::operator=(const Matrix& s)
 		int i;
 		if (n != s.n || m != s.m) {
 			n = s.n; m = s.m;
-			if (vect != nullptr) {
-				delete[] vect;
+			if (vec != nullptr) {
+				delete[] vec;
 			}
-			vect = new Vect[n];
-			for (i = 0; i < n; i++) vect[i].Init(m, 0);
+			vec = new Vector2[n];
+			for (i = 0; i < n; i++) vec[i].Init(m, 0);
 		}
 		for (i = 0; i < n; i++)
-			for (int j = 0; j < m; j++)  vect[i][j] = s.vect[i][j];
+			for (int j = 0; j < m; j++)  vec[i][j] = s.vec[i][j];
 
 	}
 	return *this;
 }
+Vector2& Matrix::operator[](int index)
+{
+	if (index >= 0 && index < n) return vec[index];
+	cout << " Error : operator[] - index index out of range \n";
+	return vec[0];
+}
+void Matrix::Input()
+{
+	for (int i = 0; i < n; i++) vec[i].Input();
+}
+
+void Matrix::Output()
+{
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cout << vec[i][j]<<"\t";
+		}
+		cout << endl;
+	}
+}
 void task3() {
 
-	
+	Matrix A(5);
+	A.Output();
+	//A.Input();
+	//cout << A<<endl;
+	//A.Output();
+	Matrix B(5, 5, 0.1);
+	B.Output();
 }
 
