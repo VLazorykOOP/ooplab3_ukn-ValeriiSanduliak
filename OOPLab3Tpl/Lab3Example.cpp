@@ -413,39 +413,30 @@ void task2() {
 
 class Vector2{
 	double* v;
-	int num = 2;
-	int state = 0;
+	int num = 5;
 	static double badIndexRef;
 	static int numVec;
 public:
 	Vector2() : num(0), v(nullptr) {}
 	Vector2(int n);
-	Vector2(int n, double&);
 	Vector2(const Vector2& s);  // crot copy
 	Vector2& operator=(const Vector2& s);
 	void Init(int n);   //
 	void Init(int n, double);   //
 	double& operator[](int index);
 	~Vector2() {
-	    std::cout << " del vec";
+	  //  std::cout << " del vec";
 		if (v) delete[] v;
 	}
-	void Input();
-	void Output();
 };
 double Vector2::badIndexRef = 0;
 int Vector2::numVec = 0;
 Vector2::Vector2(int n) {
-	if (n <= 0)    n = 2;  // default num =2;
+	if (n <= 0)    n = 5;  // default num =5;
 	num = n;
 	v = new double[n];
 	for (int i = 0; i < n; i++) {
 		v[i] = 0.0;  
-	}
-}
-Vector2::Vector2(int n, double& b) : Vector2(n) {
-	for (int i = 0; i < num; i++) {
-		v[i] = b;
 	}
 }
 void Vector2::Init(int n) {
@@ -470,7 +461,6 @@ Vector2::Vector2(const Vector2& s) {
 	if (this == &s) return;  
 	num = s.num;
 	v = new double[num];
-	state = 1;
 	for (int i = 0; i < num; i++)   v[i] = s.v[i];
 }
 Vector2& Vector2::operator=(const Vector2& s) {
@@ -480,7 +470,6 @@ Vector2& Vector2::operator=(const Vector2& s) {
 		if (v) delete[] v;
 		num = s.num;
 		v = new double[num];
-		state = 1;
 	}
 	for (int i = 0; i < num; i++)   v[i] = s.v[i];
 	return *this;
@@ -492,42 +481,16 @@ double& Vector2::operator[](int index)
 	return badIndexRef;
 }
 
-
-void Vector2::Input() {
-	int in_num = 0;
-	do {
-		cout << "Input size Vec\n";
-		cin >> in_num;
-	} while (in_num <= 0);
-	if (num != in_num) {
-		num = in_num;
-		if (v) delete[] v;
-		v = new double[num];
-	}
-	cout << " Input  v["<<num<<"] : ";
-	for (int i = 0; i < num; i++)
-	{
-		//cout << " v [ " << i << " ] real img  "; 
-		cin >> v[i];
-	}
-}
-void Vector2::Output() {
-	if (num != 0) {
-		for (int i = 0; i < num; i++)
-			cout << v[i] << '\t';
-		cout << endl;
-	}
-}
 //-------------------------------------------------------------------------------------------------------------------//
 
 class Matrix {
 	Vector2* vec = nullptr;
-	int n = 2, m = 2;
+	int n = 5, m = 5;
 	int state = 0;
 public:
-	Matrix() : Matrix(2) {}
-	Matrix(int n) : Matrix(n, n) {};
-	Matrix(int n, int m) : Matrix(n, n, 0) {};
+	Matrix() : Matrix(5) {  }
+	Matrix(int n) : Matrix(n, n) {  };
+	Matrix(int n, int m) : Matrix(n, m, 0) {  };
 	Matrix(int n, int m, double);
 	Matrix(const Matrix& s);
 	Matrix& operator=(const Matrix& s);
@@ -536,16 +499,29 @@ public:
 	    std::cout << " del mat";
 		if (vec) delete[] vec;
 	}
-	void Input();
+	int getState() {
+		return state;
+	}
 	void Output();
-};
+	Matrix Add(Matrix& d);
+	Matrix Minus(Matrix& d);
+	Matrix Multiply(double d);
+	Matrix DivideInt(int d);
+	bool CompLessAll(Matrix& s);
+	bool CompMoreAll(Matrix& s);
+	bool CompExactlyAll(Matrix& s);
+	void addElement(const int p);
+	void getElement();
 
+};
 Matrix::Matrix(int ni, int mi, double b)
 {
-	if (ni <= 0) n = 2; else n = ni;
-	if (mi <= 0) m = 2; else m = mi;
+	if (ni <= 0) n = 5; else n = ni;
+	if (mi <= 0) m = 5; else m = mi;
 	vec = new Vector2[n];
-	for (int i = 0; i < n; i++) vec[i].Init(m, b);
+	for (int i = 0; i < n; i++) { vec[i].Init(m, b); }
+
+	
 }
 Matrix::Matrix(const Matrix& s)
 {
@@ -556,7 +532,7 @@ Matrix::Matrix(const Matrix& s)
 	for (i = 0; i < n; i++) vec[i].Init(m, 0);
 	for (i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)  vec[i][j] = s.vec[i][j];
-
+	
 }
 Matrix& Matrix::operator=(const Matrix& s)
 {
@@ -582,11 +558,6 @@ Vector2& Matrix::operator[](int index)
 	cout << " Error : operator[] - index index out of range \n";
 	return vec[0];
 }
-void Matrix::Input()
-{
-	for (int i = 0; i < n; i++) vec[i].Input();
-}
-
 void Matrix::Output()
 {
 	for (int i = 0; i < n; i++) {
@@ -596,14 +567,149 @@ void Matrix::Output()
 		cout << endl;
 	}
 }
-void task3() {
+Matrix Matrix::Add(Matrix& s) {
+	Matrix tmp;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			tmp.vec[i][j] = vec[i][j] + s.vec[i][j];
+		}
+	}
+	return tmp;
+}
 
-	Matrix A(5);
+Matrix Matrix::Minus(Matrix& s) {
+	Matrix tmp;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			tmp.vec[i][j] = vec[i][j] - s.vec[i][j];
+		}
+	}
+	return tmp;
+}
+
+Matrix Matrix::Multiply(double d) {
+	Matrix tmp;
+	if (d == 0) {
+		tmp.state = BAD_DIV;
+		cout << "Eror BAD_DIV" << endl;
+		return *this;
+	}
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			tmp.vec[i][j] = vec[i][j] * d;
+		}
+	}
+	return tmp;
+}
+
+Matrix Matrix::DivideInt(int d) {
+	Matrix tmp;
+	if (d == 0) {
+		tmp.state = BAD_DIV;
+		cout << "Eror BAD_DIV" << endl;
+		return *this;
+	}
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			tmp.vec[i][j] = vec[i][j] / d;
+		}
+	}
+	return tmp;
+}
+void Matrix::addElement(const int p) {
+	srand(time(nullptr));
+	int randomN = rand() % 3;
+	int randomM = rand() % 3;
+	vec[randomN][randomM] = p;
+}
+
+void Matrix::getElement() {
+	srand(time(nullptr));
+	int randomN = rand() % 3;
+	int randomM = rand() % 3;
+	cout << "Output random element in arry : " << vec[randomN][randomM] << endl;
+}
+bool Matrix::CompLessAll(Matrix& s) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (vec[i][j] < s.vec[i][j])
+			{
+				return true;
+			}
+		}
+
+	}
+	return false;
+}
+bool Matrix::CompMoreAll(Matrix& s) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (vec[i][j] > s.vec[i][j])
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool Matrix::CompExactlyAll(Matrix& s) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (vec[i][j] == s.vec[i][j])
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void task3() {
+	Matrix A;
+	Matrix B(5);
+	Matrix C(5, 5, 3);
+	Matrix objcopy(C);
+	Matrix D;
+	Matrix E(5, 5, 10);
+	cout << "Test class Matrix : " << endl;
+	cout << "------------------------------------------------------------------" << endl;
 	A.Output();
-	//A.Input();
-	//cout << A<<endl;
-	//A.Output();
-	Matrix B(5, 5, 0.1);
+	cout << "------------------------------------------------------------------" << endl;
 	B.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	A.addElement(10);
+	A.getElement();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Test functions:" << endl;
+	cout << "------------------------------------------------------------------" << endl;
+	C = C.Add(C);
+	cout << "Add//////" << endl;
+	C.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	C = C.Minus(E);
+	cout << endl;
+	C.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Multiply function : " << endl;
+	C = C.Multiply(4);
+	cout << endl;
+	C.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "DevideInt function : " << endl;
+	C = C.DivideInt(3);
+	cout << endl;
+	C.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	C = C.DivideInt(0);
+	if (C.getState() == STATE::BAD_DIV) cout << "BAD_DIV" << endl;
+	cout << endl;
+	C.Output();
+	cout << "------------------------------------------------------------------" << endl;
+	cout << "Object state " << objcopy.getState() << endl;
+	if (objcopy.CompLessAll(C)) cout << "ObjectCopy less ObjectDef" << endl;
+	else if (objcopy.CompMoreAll(C)) cout << "ObjectCopy More ObjectDef" << endl;
+	else if (objcopy.CompLessAll(C)) cout << "ObjectCopy Exactly ObjectDef" << endl;
+	cout << "End testing"<<endl;
 }
 
