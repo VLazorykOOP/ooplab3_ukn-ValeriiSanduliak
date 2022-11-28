@@ -71,7 +71,7 @@ public:
 			cout << "Error!!!!!\n";
 			return;
 		}
-		this->hours = hours;
+		 else this->hours = hours;
 	}
 
 	void setMinute(short minute)
@@ -81,7 +81,7 @@ public:
 			cout << "Error!!!!!\n";
 			return;
 		}
-		this->minute = minute;
+		else this->minute = minute;
 	}
 	
 	void setSecond(short second)
@@ -91,7 +91,7 @@ public:
 			cout << "Error!!!!!\n";;
 			return;
 		}
-		this->second = second;
+        else this->second = second;
 	}
 	
 
